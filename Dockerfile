@@ -1,9 +1,9 @@
 ##### BASE
-FROM node:18-bullseye-slim as base
+FROM node:22.23.4-bookworm-slim as base
 
 RUN apt-get update || : && apt-get install python3 build-essential git -y
 
-RUN npm i -g pnpm
+RUN npm i -g pnpm@7.33.7
 
 ##### DEPS
 FROM base as deps
@@ -12,7 +12,7 @@ WORKDIR /app
 
 ADD . .
 
-RUN pnpm i
+RUN pnpm i --frozen-lockfile
 
 ##### BUILD
 FROM deps as build
