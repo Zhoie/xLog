@@ -13,6 +13,8 @@ env:
 
 jobs:
   build:
+    # The inherited deployment targets belong to the upstream project.
+    if: github.repository == 'Crossbell-Box/xLog'
     runs-on: ubuntu-latest
     environment: Production
     outputs:
@@ -45,6 +47,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
+            "GIT_SHA=${{ github.sha }}"
             "NEXT_PUBLIC_DISCORD_LINK=${{ vars.NEXT_PUBLIC_DISCORD_LINK }}"
             "NEXT_PUBLIC_GITHUB_LINK=${{ vars.NEXT_PUBLIC_GITHUB_LINK }}"
             "NEXT_PUBLIC_OUR_DOMAIN=${{ vars.NEXT_PUBLIC_OUR_DOMAIN }}"

@@ -1,7 +1,10 @@
 import React, { useRef } from "react"
-import Lottie, { type LottieRefCurrentProps } from "lottie-react"
+import type { LottieRefCurrentProps } from "lottie-react"
+import dynamic from "next/dynamic"
 import LogoLottieJSON from "../../../public/assets/logo.json"
 import { Image } from "~/components/ui/Image"
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false })
 
 export const Logo: React.FC<{
   type: "svg" | "png" | "lottie"

@@ -1,4 +1,4 @@
-import { unified } from "unified"
+import { unified, type Plugin } from "unified"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import remarkFrontmatter from "remark-frontmatter"
@@ -68,6 +68,9 @@ export const renderPageContent = (
   }
 
   let contentHTML = ""
+  const captureTree: Plugin<[], Root> = () => (tree: Root) => {
+    env.tree = tree
+  }
   let result: any = null
   try {
     result = unified()
@@ -106,7 +109,7 @@ export const renderPageContent = (
       .use(rehypeTable)
       .use(rehypeExternalLink)
       .use(rehypeWrapCode)
-      .use(rehypeInferDescriptionMeta)
+      .use(rehypeInferDescriptionMeta, { selector: "p" })
       .use(rehypeSlug)
       .use(rehypeAutolinkHeadings, {
         properties: {
@@ -143,12 +146,14 @@ export const renderPageContent = (
           mention: Mention,
         } as any,
       })
-      .use(() => (tree) => {
-        env.tree = tree
-      })
+      .use(captureTree)
       .processSync(content)
 
-    contentHTML = result.toString()
+    // rehype-react returns a React element, leaving VFile.value as the original
+    // Markdown. Serialize the sanitized tree explicitly for the HTML result.
+    contentHTML = env.tree
+      ? String(unified().use(rehypeStringify).stringify(env.tree))
+      : ""
   } catch (error) {
     console.error(error)
   }

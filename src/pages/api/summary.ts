@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter"
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters"
 
 import { cacheGet } from "~/lib/redis.server"
 import { toGateway } from "~/lib/ipfs-parser"

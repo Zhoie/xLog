@@ -1,4 +1,4 @@
-import { Root } from "rehype-raw"
+import type { Root } from "hast"
 import { Plugin } from "unified"
 import { visit } from "unist-util-visit"
 import { getUserContentsUrl } from "~/lib/user-contents"
@@ -8,10 +8,8 @@ import { IS_PROD } from "~/lib/constants"
 
 const isExternLink = (url: string) => /^https?:\/\//.test(url)
 
-export const rehypeImage: Plugin<Array<{ env: MarkdownEnv }>, Root> = ({
-  env,
-}) => {
-  return (tree) => {
+export const rehypeImage: Plugin<[{ env: MarkdownEnv }], Root> = ({ env }) => {
+  return (tree: Root) => {
     let first = true
     visit(tree, { tagName: "img" }, (node) => {
       if (!node.properties) return
