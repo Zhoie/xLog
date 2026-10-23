@@ -19,7 +19,8 @@ export const UniMedia: React.FC<{
           url: src.replace(IPFS_GATEWAY, "https://gateway.ipfs.io/ipfs/"),
           method: "HEAD",
         })
-        setType(result.headers["content-type"])
+        const contentType = result.headers["content-type"]
+        setType(typeof contentType === "string" ? contentType : undefined)
         setErrorHandled(true)
       } catch (error) {}
     }

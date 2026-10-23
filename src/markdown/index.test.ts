@@ -54,13 +54,11 @@ describe("html", () => {
   >
   > Some warning!
     `)
-    expect(contentHTML).toMatchInlineSnapshot(`
-      "<blockquote class=\\"callout callout-tip\\">
-      <p>Some tip!</p>
-      </blockquote>
-      <blockquote class=\\"callout callout-warn\\">
-      <p>Some warning!</p>
-      </blockquote>"
-    `)
+    expect(contentHTML).toBe(`<blockquote class="callout callout-tip">
+<p>Some tip!</p>
+</blockquote>
+<blockquote class="callout callout-warn">
+<p>Some warning!</p>
+</blockquote>`)
   })
 })

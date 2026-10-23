@@ -1,37 +1,37 @@
 import Redis from "ioredis"
 import { REDIS_URL, REDIS_EXPIRE, REDIS_REFRESH } from "~/lib/env.server"
 
-if (!REDIS_URL) {
-  console.error("REDIS_URL not set")
+let redisPromise: Promise<Redis> | undefined
+
+export const getRedis = () => {
+  if (redisPromise) return redisPromise
+  redisPromise = new Promise((resolve, reject) => {
+    const redis = new Redis(REDIS_URL)
+
+    redis.on("ready", () => {
+      console.log("Redis connected.")
+      resolve(redis)
+    })
+
+    redis.on("error", (error: any) => {
+      console.error("Redis error: ", error)
+      reject(error)
+    })
+
+    redis.on("end", () => {
+      console.error("Redis end.")
+      reject()
+    })
+  })
+  return redisPromise
 }
-
-let redisPromise: Promise<Redis> = new Promise((resolve, reject) => {
-  let redis = new Redis(REDIS_URL)
-
-  redis.on("ready", () => {
-    console.log("Redis connected.")
-    resolve(redis)
-  })
-
-  redis.on("error", (error: any) => {
-    console.error("Redis error: ", error)
-    reject(error)
-  })
-
-  redis.on("end", () => {
-    console.error("Redis end.")
-    reject()
-  })
-})
-
-export const getRedis = () => redisPromise
 
 export async function cacheGet(options: {
   key: string | (Record<string, any> | string | undefined)[]
   getValueFun: () => Promise<any>
   noUpdate?: boolean
 }) {
-  const redis = await redisPromise
+  const redis = await getRedis()
   if (redis && redis.status === "ready") {
     let redisKey: string
     if (Array.isArray(options.key)) {
@@ -65,7 +65,7 @@ export async function cacheGet(options: {
 export async function cacheDelete(
   key: string | (Record<string, any> | string | undefined)[],
 ) {
-  const redis = await redisPromise
+  const redis = await getRedis()
   if (redis && redis.status === "ready") {
     let redisKey: string
     if (Array.isArray(key)) {

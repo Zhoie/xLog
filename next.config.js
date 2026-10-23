@@ -98,7 +98,9 @@ module.exports = withBundleAnalyzer(
     },
 
     async generateBuildId() {
-      return execSync(lastCommitCommand).toString().trim()
+      return (
+        process.env.GIT_SHA || execSync(lastCommitCommand).toString().trim()
+      )
     },
 
     serverRuntimeConfig: {
