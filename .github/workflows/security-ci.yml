@@ -31,7 +31,7 @@ jobs:
       - run: pnpm test:security
       - run: pnpm build
       - run: pnpm exec tsc --noEmit
-      - name: Build the production container without publishing
-        run: docker build --build-arg GIT_SHA="$GITHUB_SHA" --tag xlog:security-check .
+      - name: Build the production container without an explicit build ID
+        run: docker build --tag xlog:security-check .
       - name: Verify the production container runtime
         run: docker run --rm --entrypoint node xlog:security-check --version
