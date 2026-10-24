@@ -35,9 +35,8 @@ ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
 ENV BUILD_STEP=1
 ARG GIT_SHA
-ENV GIT_SHA=${GIT_SHA}
-RUN test -n "$GIT_SHA"
-RUN pnpm build
+# CI supplies the commit SHA; direct builds need an ID without Git metadata.
+RUN GIT_SHA="${GIT_SHA:-$(node -p 'require("node:crypto").randomUUID()')}" pnpm build
 
 ##### FINAL
 FROM node:22.23.4-bookworm-slim
